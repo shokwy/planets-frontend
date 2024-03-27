@@ -4,6 +4,7 @@ import UserPage from "../pages/UserPage.vue";
 import searchPage from "../pages/searchPage.vue";
 import UserEditPage from "../pages/UserEditPage.vue";
 import searchResultPage from "../pages/searchResultPage.vue";
+import UserLoginPage from "../pages/UserLoginPage.vue";
 
 
 
@@ -16,6 +17,7 @@ const routes = [
     { path: '/search', component: searchPage },
     { path: '/user/list', component: searchResultPage },
     { path: '/user/edit', component: UserEditPage },
+    { path: '/user/login', component: UserLoginPage },
 ]
 
 export default routes;

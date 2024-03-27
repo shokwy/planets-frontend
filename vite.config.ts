@@ -12,7 +12,9 @@ export default defineConfig({
       resolvers: [VantResolver()],
     }),
     Components({
-      resolvers: [VantResolver()],
+      resolvers: [VantResolver({
+        importStyle: false,
+      })],
     }),
   ],
 })

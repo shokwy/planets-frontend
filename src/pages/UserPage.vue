@@ -1,34 +1,41 @@
 <template>
-  <van-cell title="头像" center is-link to='/user/edit'
-            @click="toEdit('avatarUrl','头像', user.avatarUrl)">
-    <img style="height: 48px" :src="user.avatarUrl"/>
-  </van-cell>
-  <van-cell title="昵称" is-link to='/user/edit' :value="user.username"
-            @click="toEdit('username','昵称', user.username)"/>
-  <van-cell title="账号" is-link to='/user/edit' :value="user.userAccount"
-            @click="toEdit('userAccount','账号', user.userAccount)"/>
-  <van-cell title="性别" is-link to='/user/edit' :value="user.gender"
-            @click="toEdit('gender','性别', user.gender)"/>
-  <van-cell title="电话" is-link to='/user/edit' :value="user.phone"
-            @click="toEdit('phone','电话', user.phone)"/>
-  <van-cell title="邮箱" is-link to='/user/edit' :value="user.email"
-            @click="toEdit('email','邮箱', user.email)"/>
-  <van-cell title="注册时间" :value="user.createTime.toISOString()" />
+  <template v-if="user != null">
+    <van-cell title="头像" center is-link to='/user/edit'
+              @click="toEdit('avatarUrl','头像', user.avatarUrl)">
+      <img style="height: 48px" :src="user.avatarUrl"/>
+    </van-cell>
+    <van-cell title="昵称" is-link to='/user/edit' :value="user.username"
+              @click="toEdit('username','昵称', user.username)"/>
+    <van-cell title="账号" is-link to='/user/edit' :value="user.userAccount"
+              @click="toEdit('userAccount','账号', user.userAccount)"/>
+    <van-cell title="性别" is-link to='/user/edit' :value="user.gender"
+              @click="toEdit('gender','性别', user.gender)"/>
+    <van-cell title="电话" is-link to='/user/edit' :value="user.phone"
+              @click="toEdit('phone','电话', user.phone)"/>
+    <van-cell title="邮箱" is-link to='/user/edit' :value="user.email"
+              @click="toEdit('email','邮箱', user.email)"/>
+    <van-cell title="注册时间" :value="user.createTime" />
+  </template>
 </template>
 
 <script setup>
 import {useRouter} from "vue-router";
+import myAxios from "../plugins/myAxios";
+import {onMounted, ref} from 'vue';
+import {getCurrentUser} from "../services/user.ts";
 
-const user = {
-  id: 1,
-  username: 'shok',
-  userAccount: 'shokwy',
-  avatarUrl: 'https://img1.baidu.com/it/u=1645832847,2375824523&fm=253&fmt=auto&app=138&f=JPEG?w=480&h=480',
-  gender: '男',
-  phone: '121311313',
-  email: '23432@qq.com',
-  createTime: new Date(),
-};
+const user = ref();
+
+onMounted(async ()=>{
+  // const res = await myAxios.get('/user/current');
+  // if (res.code === 0){
+  //   user.value =res.data;
+  //   //Toast.success('获取用户信息成功');
+  // }else {
+  //   //Toast.fail('获取用户信息成功');
+  // }
+  user.value = await getCurrentUser();
+})
 
 const router = useRouter();
 
