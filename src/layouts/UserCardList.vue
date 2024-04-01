@@ -1,7 +1,7 @@
 <template>
   <van-card
       v-for="user in userList"
-      :desc="'简介：' + user.profile"
+      :desc="'简介：' + user.introduction"
       :title="user.username"
       :thumb="user.avatarUrl"
   >
