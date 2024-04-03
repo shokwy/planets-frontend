@@ -1,6 +1,6 @@
 <template>
   <van-nav-bar
-      title="title"
+      :title="title"
       left-arrow
       @click-left="onClickLeft"
       @click-right="onClickRight"
@@ -23,7 +23,8 @@
 
 
 import {useRouter} from "vue-router";
-
+import {ref} from "vue";
+import routes from "../config/router.ts";
 
 const router = useRouter();
 const onClickLeft = () => {
@@ -34,8 +35,21 @@ const onClickRight = () => {
   router.push('/search')
 };
 
+const DEFAULT_TITLE = '星球';
+const title = ref(DEFAULT_TITLE);
 
-//const onChange = (index:string) => showToast(`标签 ${index}`);
+/**
+ * 根据路由切换标题
+ */
+router.beforeEach((to, from) => {
+  const toPath = to.path;
+  const route = routes.find((route) => {
+    return toPath == route.path;
+  })
+  title.value = route?.title ?? DEFAULT_TITLE;
+})
+
+
 </script>
 
 <style>

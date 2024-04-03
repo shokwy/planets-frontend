@@ -25,16 +25,18 @@
         </div>
       </template>
       <template #footer>
-        <van-button v-if="team.userId !== currentUser?.id" size="small" type="primary"  plain
-                    @click="doJoinTeam(team.id)">加入队伍
+        <van-button v-if="team.userId !== props.currentUser?.id && !team.hasJoin" size="small" type="primary" plain
+                    @click="doJoinTeam(team.id)">
+          加入队伍
         </van-button>
-        <van-button v-if="team.userId === currentUser?.id" size="small" type="primary" plain
+        <van-button v-if="team.userId === props.currentUser?.id" size="small" type="primary" plain
                     @click="doUpdateTeam(team.id)">更新队伍
         </van-button>
-        <van-button v-if="team.userId !== currentUser?.id" size="small" type="primary" plain
+        <!-- 仅加入队伍可见 -->
+        <van-button v-if="team.hasJoin" size="small"  plain type="warning"
                     @click="doQuitTeam(team.id)">退出队伍
         </van-button>
-        <van-button v-if="team.userId === currentUser?.id" size="small" type="primary" plain
+        <van-button v-if="team.userId === props.currentUser?.id" size="small" type="danger" plain
                     @click="doDeleteTeam(team.id)">解散队伍
         </van-button>
       </template>
@@ -53,14 +55,17 @@ import {showFailToast, showSuccessToast} from "vant";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {getCurrentUser} from "../services/user.ts";
+import {UserType} from "../models/user";
 
 interface TeamCardListProps {
   teamList: TeamType[];
+  currentUser: UserType;
 }
 
 const props = withDefaults(defineProps<TeamCardListProps>(), {
   // @ts-ignore
   teamList: [] as TeamType[],
+  currentUser: undefined,
 });
 
 const router = useRouter();
@@ -122,11 +127,11 @@ const doUpdateTeam = (id: number) => {
   })
 }
 
-const currentUser = ref();
-
-onMounted(async () =>{
-  currentUser.value = await getCurrentUser();
-})
+// const currentUser = ref();
+//
+// onMounted(async () =>{
+//   currentUser.value = await getCurrentUser();
+// })
 
 </script>
 
