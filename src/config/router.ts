@@ -9,19 +9,29 @@ import TeamAddPage from "../pages/TeamAddPage.vue";
 import TeamUpdatePage from "../pages/TeamUpdatePage.vue";
 import UserTeamJoinPage from "../pages/UserTeamJoinPage.vue";
 import UserTeamCreatePage from "../pages/UserTeamCreatePage.vue";
+import UserRegisterPage from "../pages/UserRegisterPage.vue";
+import UserGenderEditPage from "../pages/UserGenderEditPage.vue";
+import EditTagsPage from "../pages/EditTagsPage.vue";
+import UserMorePage from "../pages/UserMorePage.vue";
 
 
 
 
 //定义一些路由
 const routes = [
-    { path: '/', title:'星球', component: Index },
+    { path: '/user/login', title:'登录', component: UserLoginPage },
+    { path: '/user/register', title:'注册', component: UserRegisterPage },
+    { path: '/', redirect: '/user/login' },
+    { path: '/index', title:'星球', component: Index },
     { path: '/team', title:'寻找星球', component: TeamPage },
-    { path: '/user', title:'个人信息', component: UserPage },
+    { path: '/user', title:'个人信息',  component: UserPage },
+    { path: '/user/more', title:'个人信息',  component: UserMorePage },
     { path: '/search', title:'发现', component: searchPage },
     { path: '/user/list', title:'其他用户', component: searchResultPage },
     { path: '/user/edit', title:'编辑信息', component: UserEditPage },
-    { path: '/user/login', title:'登录', component: UserLoginPage },
+    { path: '/user/edit/gender', title:'编辑信息', component: UserGenderEditPage },
+    { path: '/user/tags', title:'编辑标签', component: EditTagsPage },
+
 
     { path: '/team/add', title:'创建星球', component: TeamAddPage },
     { path: '/team/update', title:'更新星球', component: TeamUpdatePage },

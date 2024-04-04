@@ -8,16 +8,27 @@
               @click="toEdit('username','昵称', user.username)"/>
     <van-cell title="账号" is-link to='/user/edit' :value="user.userAccount"
               @click="toEdit('userAccount','账号', user.userAccount)"/>
-    <van-cell title="性别" is-link to='/user/edit' :value="user.gender"
-              @click="toEdit('gender','性别', user.gender)"/>
-    <van-cell title="简介" is-link to='/user/edit' :value="user.introduction"
-              @click="toEdit('introduction','简介', user.introduction)"/>
-    <van-cell title="电话" is-link to='/user/edit' :value="user.phone"
-              @click="toEdit('phone','电话', user.phone)"/>
-    <van-cell title="邮箱" is-link to='/user/edit' :value="user.email"
-              @click="toEdit('email','邮箱', user.email)"/>
-    <van-cell title="我创建的队伍" is-link to="/user/team/create" />
-    <van-cell title="我加入的队伍" is-link to="/user/team/join" />
+
+    <van-cell  is-link  to="/user/tags" :value="user.tags">
+      <template #title>
+        <span class="custom-title">标签</span>
+      </template>
+      <van-tag plain type="primary" round v-for="tag in user.tags" style="margin-left: 8px; margin-top: 8px"  >
+        {{tag}}
+      </van-tag>
+    </van-cell>
+    <van-cell title="更多" is-link to="/user/more" />
+
+    <van-space :size="20">
+    </van-space>
+
+    <van-cell title="我创建的星球" is-link to="/user/team/create" />
+    <van-cell title="我加入的星球" is-link to="/user/team/join" />
+    <div style="margin: 16px;">
+      <van-button  round block type="danger" native-type="submit" @click="logOut" >
+        退出登录
+      </van-button>
+    </div>
   </template>
 </template>
 
@@ -26,18 +37,14 @@ import {useRouter} from "vue-router";
 import myAxios from "../plugins/myAxios";
 import {onMounted, ref} from 'vue';
 import {getCurrentUser} from "../services/user.ts";
+import {showSuccessToast} from "vant";
 
 const user = ref();
 
 onMounted(async ()=>{
-  // const res = await myAxios.get('/user/current');
-  // if (res.code === 0){
-  //   user.value =res.data;
-  //   //Toast.success('获取用户信息成功');
-  // }else {
-  //   //Toast.fail('获取用户信息成功');
-  // }
+
   user.value = await getCurrentUser();
+  user.value.tags = JSON.parse(user.value.tags)
 })
 
 const router = useRouter();
@@ -54,6 +61,25 @@ const toEdit = (editKey, editName, currentValue) => {
       currentValue,
     }
   })
+}
+
+const toEditGender = () => {
+  router.push({
+    path: '/user/edit/gender',
+  })
+}
+
+/**
+ * 注销
+ */
+const logOut = async () => {
+  const res = await myAxios.post('/user/logout')
+  if(res.data === 1){
+    showSuccessToast('退出登录');
+    router.push({
+      path: '/user/login'
+    })
+  }
 }
 </script>
 

@@ -1,34 +1,32 @@
 <template>
   <div id="teamPage">
-    <van-search v-model="searchText" placeholder="搜索队伍" @search="onSearch" />
-    <van-button type="primary" @click="doJoinTeam">创建队伍</van-button>
-    <team-card-list :teamList="teamList" />
+    <team-card-list :teamList="teamList" :current-user="currentUser"/>
     <van-empty v-if="teamList?.length < 1" description="数据为空"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import {useRouter} from "vue-router";
+
 import TeamCardList from "../layouts/TeamCardList.vue";
 import {onMounted, ref} from "vue";
 import myAxios from "../plugins/myAxios";
 import {showFailToast} from "vant";
+import {getCurrentUser} from "../services/user.ts";
 
-const router = useRouter();
-const searchText = ref('');
 
-// 跳转到加入队伍页
-const doJoinTeam = () => {
-  router.push({
-    path: "/team/add"
-  })
-}
+// 跳转到加入星球页
 
 const teamList = ref([]);
 
+const currentUser = ref();
+
+onMounted(async () =>{
+  currentUser.value = await getCurrentUser();
+})
+
 /**
- * 搜索队伍
+ * 搜索星球
  * @param val
  * @returns {Promise<void>}
  */
@@ -42,7 +40,7 @@ const listTeam = async (val = '') => {
   if (res?.code === 0) {
     teamList.value = res.data;
   } else {
-    showFailToast('加载队伍失败，请刷新重试');
+    showFailToast('加载失败，请刷新重试');
   }
 }
 

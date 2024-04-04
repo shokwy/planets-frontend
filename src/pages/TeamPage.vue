@@ -1,6 +1,6 @@
 <template>
   <div id="teamPage">
-    <van-search v-model="searchText" placeholder="搜素队伍" @search="onSearch"/>
+    <van-search v-model="searchText" placeholder="搜素星球" @search="onSearch"/>
     <van-tabs v-model:active="active" @change="onTabChange">
       <van-tab title="公开" name="public" />
       <van-tab title="加密" name="private" />
@@ -65,7 +65,7 @@ const onSearch = async (val) => {
 }
 
 /**
- * 搜索队伍
+ * 搜索星球
  * @param val
  * @param status
  * @returns {Promise<void>}
@@ -82,7 +82,7 @@ const listTeam = async (val = '', status = 0) => {
   if (res?.code === 0) {
     teamList.value = res.data;
   } else {
-    showFailToast("队伍加载失败，请刷新重试");
+    showFailToast("加载失败，请刷新重试");
   }
 }
 

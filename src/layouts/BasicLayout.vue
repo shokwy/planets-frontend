@@ -1,5 +1,6 @@
 <template>
-  <van-nav-bar
+  <van-nav-bar v-if="nowUrl !== '/user/login' && nowUrl !== '/user/register'"
+               fixed="true"
       :title="title"
       left-arrow
       @click-left="onClickLeft"
@@ -9,13 +10,14 @@
       <van-icon name="search" size="18" />
     </template>
   </van-nav-bar>
+  <van-nav-bar v-else  fixed="true" title="星球" />
   <div id="content">
     <router-view/>
   </div>
-  <van-tabbar route  >
-    <van-tabbar-item to="/" icon="home-o" name="index">主页</van-tabbar-item>
-    <van-tabbar-item to="/team" icon="search" name="team">队伍</van-tabbar-item>
-    <van-tabbar-item to="/user" icon="friends-o" name="user">个人</van-tabbar-item>
+  <van-tabbar route  v-if="nowUrl !== '/user/login' && nowUrl !== '/user/register'">
+    <van-tabbar-item to="/index" icon="home-o" name="index">主页</van-tabbar-item>
+    <van-tabbar-item to="/team" icon="friends-o" name="team">星球</van-tabbar-item>
+    <van-tabbar-item to="/user" icon="user-o" name="user">个人</van-tabbar-item>
   </van-tabbar>
 </template>
 
@@ -23,10 +25,16 @@
 
 
 import {useRouter} from "vue-router";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import routes from "../config/router.ts";
+import {getCurrentUser} from "../services/user.ts";
 
 const router = useRouter();
+const currentUser = ref();
+
+onMounted(async () =>{
+  currentUser.value = await getCurrentUser();
+})
 const onClickLeft = () => {
   router.back();
 };
@@ -37,7 +45,7 @@ const onClickRight = () => {
 
 const DEFAULT_TITLE = '星球';
 const title = ref(DEFAULT_TITLE);
-
+const nowUrl = ref();
 /**
  * 根据路由切换标题
  */
@@ -47,6 +55,7 @@ router.beforeEach((to, from) => {
     return toPath == route.path;
   })
   title.value = route?.title ?? DEFAULT_TITLE;
+  nowUrl.value = route?.path;
 })
 
 
@@ -54,6 +63,7 @@ router.beforeEach((to, from) => {
 
 <style>
 #content{
+  padding-top: 50px;
   padding-bottom: 50px;
 }
 </style>

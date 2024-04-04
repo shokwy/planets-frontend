@@ -1,7 +1,7 @@
 import {UserType} from "./user";
 
 /**
- * 队伍类别
+ * 星球类别
  */
 export type TeamType = {
     id: number;

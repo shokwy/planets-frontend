@@ -3,7 +3,7 @@
     <van-card
         v-for="team in props.teamList"
         :thumb="teamLogo"
-        :desc="team.description"
+        :desc="'简介：' + team.description"
         :title="`${team.name}`"
     >
       <template #tags>
@@ -15,7 +15,7 @@
       </template>
       <template #bottom>
         <div>
-          {{ '最大人数: ' + team.maxNum }}
+          {{ '人数: '+ team.hasJoinNum + '/' + team.maxNum }}
         </div>
         <div v-if="team.expireTime">
           {{ '过期时间: ' + team.expireTime }}
@@ -26,21 +26,25 @@
       </template>
       <template #footer>
         <van-button v-if="team.userId !== props.currentUser?.id && !team.hasJoin" size="small" type="primary" plain
-                    @click="doJoinTeam(team.id)">
-          加入队伍
+                    @click="preJoinTeam(team)">
+          加入星球
         </van-button>
         <van-button v-if="team.userId === props.currentUser?.id" size="small" type="primary" plain
-                    @click="doUpdateTeam(team.id)">更新队伍
+                    @click="doUpdateTeam(team.id)">更新星球
         </van-button>
-        <!-- 仅加入队伍可见 -->
+        <!-- 仅加入星球可见 -->
         <van-button v-if="team.hasJoin" size="small"  plain type="warning"
-                    @click="doQuitTeam(team.id)">退出队伍
+                    @click="doQuitTeam(team.id)">退出星球
         </van-button>
         <van-button v-if="team.userId === props.currentUser?.id" size="small" type="danger" plain
-                    @click="doDeleteTeam(team.id)">解散队伍
+                    @click="doDeleteTeam(team.id)">解散星球
         </van-button>
       </template>
     </van-card>
+    <van-dialog v-model:show="showPasswordDialog" title="请输入密码" show-cancel-button @confirm="doJoinTeam" @cancel="doJoinCancel">
+      <van-field v-model="password" placeholder="请输入密码"/>
+    </van-dialog>
+
   </div>
 
 </template>
@@ -71,21 +75,45 @@ const props = withDefaults(defineProps<TeamCardListProps>(), {
 const router = useRouter();
 
 /**
- * 加入队伍
+ * 加入星球
  */
-const doJoinTeam = async (id:number) => {
+const doJoinTeam = async () => {
   const res = await myAxios.post('/team/join', {
-    teamId: id,
+    teamId: joinTeamId.value,
+    password: password.value
+
   });
   if (res?.code === 0) {
     showSuccessToast('加入成功');
   } else {
-   showFailToast('加入失败' + (res.description ? `，${res.description}` : ''));
+   showFailToast((res.description ? `${res.description}` : '加入失败'));
   }
 }
 
+const showPasswordDialog = ref(false);
+const password = ref('');
+const joinTeamId = ref(0);
+
 /**
- * 退出队伍
+ * 判断是不是加密房间，是的话显示密码框
+ * @param team
+ */
+const preJoinTeam = (team: TeamType) => {
+  joinTeamId.value = team.id;
+  if (team.status === 0) {
+    doJoinTeam()
+  } else {
+    showPasswordDialog.value = true;
+  }
+}
+
+const doJoinCancel = () => {
+  joinTeamId.value = 0;
+  password.value = '';
+}
+
+/**
+ * 退出星球
  * @param id
  */
 const doQuitTeam = async (id: number) => {
@@ -100,7 +128,7 @@ const doQuitTeam = async (id: number) => {
 }
 
 /**
- * 解散队伍
+ * 解散星球
  * @param id
  */
 const doDeleteTeam = async (id: number) => {
@@ -115,7 +143,7 @@ const doDeleteTeam = async (id: number) => {
 }
 
 /**
- * 跳转至更新队伍页
+ * 跳转至星球更新页
  * @param id
  */
 const doUpdateTeam = (id: number) => {
