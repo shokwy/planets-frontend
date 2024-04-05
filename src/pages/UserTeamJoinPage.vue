@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 
-import TeamCardList from "../layouts/TeamCardList.vue";
+import TeamCardList from "../components/TeamCardList.vue";
 import {onMounted, ref} from "vue";
 import myAxios from "../plugins/myAxios";
 import {showFailToast} from "vant";

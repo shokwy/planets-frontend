@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import TeamCardList from "../layouts/TeamCardList.vue";
+import TeamCardList from "../components/TeamCardList.vue";
 import {onMounted, ref} from "vue";
 import myAxios from "../plugins/myAxios.ts";
 import {showFailToast} from "vant";

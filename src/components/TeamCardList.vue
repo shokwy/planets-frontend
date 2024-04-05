@@ -51,9 +51,9 @@
 
 <script setup lang="ts">
 import {TeamType} from "../models/team";
-import {teamStatusEnum} from "../constants/team";
+import {teamStatusEnum} from "../constants/team.ts";
 import teamLogo from '../assets/bob.jpeg';
-import myAxios from "../plugins/myAxios";
+import myAxios from "../plugins/myAxios.ts";
 import {showFailToast, showSuccessToast} from "vant";
 
 import {useRouter} from "vue-router";

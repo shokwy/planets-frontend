@@ -11,7 +11,7 @@
 import { ref, watchEffect } from 'vue';
 import myAxios from "../plugins/myAxios";
 
-import UserCardList from "../layouts/UserCardList.vue";
+import UserCardList from "../components/UserCardList.vue";
 import {showFailToast} from "vant";
 import {UserType} from "../models/user";
 
