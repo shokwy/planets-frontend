@@ -13,6 +13,9 @@ import UserRegisterPage from "../pages/UserRegisterPage.vue";
 import UserGenderEditPage from "../pages/UserGenderEditPage.vue";
 import EditTagsPage from "../pages/EditTagsPage.vue";
 import UserMorePage from "../pages/UserMorePage.vue";
+import ShowUserDetail from "../pages/ShowUserDetail.vue";
+import ShowTeamDetail from "../pages/ShowTeamDetail.vue";
+import TeamMembersPage from "../pages/TeamMembersPage.vue";
 
 
 
@@ -23,7 +26,6 @@ const routes = [
     { path: '/user/register', title:'注册', component: UserRegisterPage },
     { path: '/', redirect: '/user/login' },
     { path: '/index', title:'星球', component: Index },
-    { path: '/team', title:'寻找星球', component: TeamPage },
     { path: '/user', title:'个人信息',  component: UserPage },
     { path: '/user/more', title:'个人信息',  component: UserMorePage },
     { path: '/search', title:'发现', component: searchPage },
@@ -31,12 +33,16 @@ const routes = [
     { path: '/user/edit', title:'编辑信息', component: UserEditPage },
     { path: '/user/edit/gender', title:'编辑信息', component: UserGenderEditPage },
     { path: '/user/tags', title:'编辑标签', component: EditTagsPage },
-
-
-    { path: '/team/add', title:'创建星球', component: TeamAddPage },
-    { path: '/team/update', title:'更新星球', component: TeamUpdatePage },
+    { path: '/user/detail', title:'详情', component: ShowUserDetail },
     { path: '/user/team/join', title:'我加入星球', component: UserTeamJoinPage },
     { path: '/user/team/create', title:'我创建的星球', component: UserTeamCreatePage },
+
+    { path: '/team', title:'寻找星球', component: TeamPage },
+    { path: '/team/detail', title:'星球详情', component: ShowTeamDetail },
+    { path: '/team/add', title:'创建星球', component: TeamAddPage },
+    { path: '/team/update', title:'更新星球', component: TeamUpdatePage },
+    { path: '/team/members', title:'星球成员', component: TeamMembersPage },
+
 ]
 
 export default routes;

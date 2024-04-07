@@ -4,6 +4,7 @@
         :desc="'简介：' + user.introduction"
         :title="user.username"
         :thumb="user.avatarUrl"
+        @click="toUserDetail(user.id)"
     >
       <template #tags>
         <van-tag plain type="primary" round v-for="tag in user.tags" style="margin-right: 8px; margin-top: 8px" >
@@ -19,6 +20,10 @@
 
 <script setup lang="ts">
 import {UserType} from "../models/user";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
+
 
 interface UserCardListProps{
   userList: UserType[];
@@ -30,6 +35,16 @@ const props= withDefaults(defineProps<UserCardListProps>(),{
   userList: [] as UserType[],
   loading: true,
 });
+
+const toUserDetail = (id:number) => {
+  router.push({
+    path:'/user/detail',
+    query:{
+      id
+    },
+  })
+}
+
 
 </script>
 

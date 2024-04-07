@@ -5,6 +5,7 @@
         :thumb="teamLogo"
         :desc="'简介：' + team.description"
         :title="`${team.name}`"
+        @click-thumb="toTeamDetail(team.id)"
     >
       <template #tags>
         <van-tag plain type="danger" style="margin-right: 8px; margin-top: 8px">
@@ -18,10 +19,10 @@
           {{ '人数: '+ team.hasJoinNum + '/' + team.maxNum }}
         </div>
         <div v-if="team.expireTime">
-          {{ '过期时间: ' + team.expireTime }}
+          {{ '过期时间: ' + team.expireTime.toString().slice(0,10) }}
         </div>
         <div>
-          {{ '创建时间: ' + team.createTime }}
+          {{ '创建时间: ' + team.createTime.toString().slice(0,10)}}
         </div>
       </template>
       <template #footer>
@@ -74,6 +75,19 @@ const props = withDefaults(defineProps<TeamCardListProps>(), {
 
 const router = useRouter();
 
+
+/**
+ * 星球详情
+ * @param id
+ */
+const toTeamDetail = (id:number) => {
+  router.push({
+    path:'/team/detail',
+    query:{
+      id
+    },
+  })
+}
 /**
  * 加入星球
  */
