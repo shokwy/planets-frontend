@@ -1,5 +1,5 @@
 <template>
-  <user-card-list :user-list="userList" />
+  <user-card-list :user-list="userList" :loading="loading"/>
   <van-empty v-if="!userList || userList.length < 1" description="搜索结果为空" />
 </template>
 <script setup>
@@ -11,8 +11,8 @@ import UserCardList from "../components/UserCardList.vue";
 
 const route = useRoute();
 const {tags} = route.query;
-
 const userList = ref([]);//存放用户列表
+const loading = ref(true)
 
 onMounted ( async ()=>{     //异步调用
   const userListData = await myAxios.get('/user/search/tags',{
@@ -29,6 +29,7 @@ onMounted ( async ()=>{     //异步调用
       .then(function (response){
         console.log('/user/search/tags succeed',response);
         //Toast.success('请求成功!');
+        loading.value = false
         return response?.data;  //返回数据  ?.可选链操作符，避免数据为null或undefined时报错
       })
       .catch(function (error){

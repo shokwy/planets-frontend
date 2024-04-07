@@ -9,7 +9,7 @@
     />
   </form>
   <van-divider content-position="left">已选标签</van-divider>
-  <div v-if="activeIds.length===0">请选择标签</div>
+  <div v-if="activeIds.length===0">热门标签</div>
   <van-row gutter="16" style="padding: 0 16px">
     <van-col v-for="tag in activeIds">
       <van-tag closeable size="medium" type="primary" @close="doClose(tag)">
@@ -33,18 +33,26 @@ import {useRouter} from 'vue-router';
 
 const router = useRouter();
 const searchText = ref('');
-
+//已选中的标签
+const activeIds = ref([]);
+const activeIndex = ref(0);
 /**
  * 搜索过滤
  * @param val
  */
 const onSearch = (val) => {
-  tagList.value = originTagList.map(parentTag => {
-    const tempChildren = [...parentTag.children];
-    const tempParentTag = {...parentTag};
-    tempParentTag.children = tempChildren.filter(item => item.text.includes(searchText.value));
-    return tempParentTag;
-  });
+  // tagList.value = originTagList.map(parentTag => {
+  //   const tempChildren = [...parentTag.children];
+  //   const tempParentTag = {...parentTag};
+  //   tempParentTag.children = tempChildren.filter(item => item.text.includes(searchText.value));
+  //   return tempParentTag;
+  // });
+  router.push({
+    path: '/user/list',
+    query: {
+      tags: [searchText.value]
+    }
+  })
 
 };
 const onCancel = () => {
@@ -58,23 +66,37 @@ const doClose = (tag:string) =>{
     return item !== tag;
   })
 }
-//已选中的标签
-const activeIds = ref([]);
-const activeIndex = ref(0);
+
 ``
 const doSearchResult = () => {
-  router.push({
-    path: '/user/list',
-    query: {
-      tags: activeIds.value
-    }
-  })
+  if (activeIds.value.length == 0 ){
+    router.push({
+      path: '/user/list',
+      query: {
+        tags: [searchText.value]
+      }
+    })
+  }else {
+    router.push({
+      path: '/user/list',
+      query: {
+        tags: activeIds.value
+      }
+    })
+  }
 }
 const originTagList = [{
-  text: '性别',
+  text: '语言',
   children: [
-    {text: '男', id: '男'},
-    {text: '女', id: '女'},
+    {text: 'Java', id: 'Java'},
+    {text: 'Python', id: 'Python'},
+    {text: 'C#', id: 'C#'},
+    {text: 'PHP', id: 'PHP'},
+    {text: 'C/C++', id: 'C/C++'},
+    {text: 'JavaScript', id: 'JavaScript'},
+    {text: 'TypeScript', id: 'TypeScript'},
+    {text: 'Ruby', id: 'Ruby'},
+    {text: 'Go', id: 'Go'},
   ],
 },
   {
@@ -82,10 +104,32 @@ const originTagList = [{
     children: [
       {text: '大一', id: '大一'},
       {text: '大二', id: '大二'},
-      {text: '大3', id: '大3'},
-      {text: '大4', id: '大4'},
-      {text: '大5', id: '大5'},
-      {text: '大6', id: '大6'},
+      {text: '大三', id: '大三'},
+      {text: '大四', id: '大四'},
+      {text: '研究生', id: '研究生'},
+    ],
+  },
+  {
+    text: '目标',
+    children: [
+      {text: '竞赛', id: '竞赛'},
+      {text: '考研', id: '考研'},
+      {text: '实习', id: '实习'},
+      {text: '春招', id: '春招'},
+      {text: '秋招', id: '秋招'},
+      {text: '大厂', id: '大厂'},
+      {text: '创业', id: '创业'},
+    ],
+  },
+  {
+    text: '方向',
+    children: [
+      {text: '全栈', id: '全栈'},
+      {text: '前端', id: '前端'},
+      {text: '后端', id: '后端'},
+      {text: '算法', id: '算法'},
+      {text: '测试', id: '测试'},
+      {text: '运维', id: '运维'},
     ],
   },
 ]

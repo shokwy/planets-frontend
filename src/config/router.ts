@@ -27,7 +27,7 @@ const routes = [
     { path: '/user', title:'个人信息',  component: UserPage },
     { path: '/user/more', title:'个人信息',  component: UserMorePage },
     { path: '/search', title:'发现', component: searchPage },
-    { path: '/user/list', title:'其他用户', component: searchResultPage },
+    { path: '/user/list', title:'星友列表', component: searchResultPage },
     { path: '/user/edit', title:'编辑信息', component: UserEditPage },
     { path: '/user/edit/gender', title:'编辑信息', component: UserGenderEditPage },
     { path: '/user/tags', title:'编辑标签', component: EditTagsPage },
