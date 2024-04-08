@@ -16,6 +16,9 @@ import UserMorePage from "../pages/UserMorePage.vue";
 import ShowUserDetail from "../pages/ShowUserDetail.vue";
 import ShowTeamDetail from "../pages/ShowTeamDetail.vue";
 import TeamMembersPage from "../pages/TeamMembersPage.vue";
+import FriendPage from "../pages/FriendPage.vue";
+import FriendRequesPaget from "../pages/FriendRequesPaget.vue";
+import ChatPage from "../pages/ChatPage.vue";
 
 
 
@@ -37,11 +40,16 @@ const routes = [
     { path: '/user/team/join', title:'我加入星球', component: UserTeamJoinPage },
     { path: '/user/team/create', title:'我创建的星球', component: UserTeamCreatePage },
 
+    { path: '/friend', title:'好友', component: FriendPage },
+    { path: '/friend/request', title:'好友', component: FriendRequesPaget },
+
     { path: '/team', title:'寻找星球', component: TeamPage },
     { path: '/team/detail', title:'星球详情', component: ShowTeamDetail },
     { path: '/team/add', title:'创建星球', component: TeamAddPage },
     { path: '/team/update', title:'更新星球', component: TeamUpdatePage },
     { path: '/team/members', title:'星球成员', component: TeamMembersPage },
+
+    { path: '/chat', title:'聊天', component: ChatPage },
 
 ]
 

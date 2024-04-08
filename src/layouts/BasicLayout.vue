@@ -15,9 +15,10 @@
     <router-view/>
   </div>
   <van-tabbar route  v-if="nowUrl !== '/user/login' && nowUrl !== '/user/register'">
-    <van-tabbar-item to="/index" icon="home-o" name="index">主页</van-tabbar-item>
-    <van-tabbar-item to="/team" icon="friends-o" name="team">星球</van-tabbar-item>
-    <van-tabbar-item to="/user" icon="user-o" name="user">个人</van-tabbar-item>
+    <van-tabbar-item replace to="/index" icon="home-o" name="index">主页</van-tabbar-item>
+    <van-tabbar-item replace to="/friend" icon="friends-o" >好友</van-tabbar-item>
+    <van-tabbar-item replace to="/team" icon="star-o" name="team">星球</van-tabbar-item>
+    <van-tabbar-item replace to="/user" icon="user-o" name="user">个人</van-tabbar-item>
   </van-tabbar>
 </template>
 
