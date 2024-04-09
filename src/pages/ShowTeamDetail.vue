@@ -28,6 +28,7 @@
     <van-cell title="球长" is-link   :value="team.createUser.username"
     @click="toUserDetail(team.createUser.id)"/>
     <van-cell title="成员" is-link  @click="toTeamMembers(team.id)"/>
+    <van-cell title="星球频道" is-link @click="toChat" v-if="team.hasJoin"/>
     <van-cell title="创建时间" :value="team.createTime.slice(0,10)"  />
     <van-cell title="过期时间" :value="team.expireTime.slice(0,10)"  />
 
@@ -99,6 +100,20 @@ const toTeamMembers = (id) => {
     },
   })
 };
+
+/**
+ * 队伍群聊
+ */
+const toChat = () => {
+  router.push({
+    path: "/chat",
+    query: {
+      teamId: team.value.id,
+      teamName: team.value.name,
+      teamType: 2
+    }
+  })
+}
 
 
 </script>

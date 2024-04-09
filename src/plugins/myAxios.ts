@@ -1,11 +1,12 @@
 import axios from "axios";
 import {showFailToast} from "vant";
 
-
 const isDev = process.env.NODE_ENV === 'development';
+
+export const URL =  isDev ? 'http://localhost:8080/api' : '线上';
 // Set config defaults when creating the instance
 const myAxios = axios.create({
-    baseURL: isDev ? 'http://localhost:8080/api' : '...',
+    baseURL: URL,
 });
 
 myAxios.defaults.withCredentials = true; // 允许携带 cookie

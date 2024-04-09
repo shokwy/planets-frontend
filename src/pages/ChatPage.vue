@@ -5,12 +5,7 @@
     <p class="heard" v-if="stats.chatType===stats.chatEnum.TEAM_CHAT">{{ stats.team.teamName }}</p>
     <div class="content"  ref="chatRoom"  v-html="stats.content"></div>
     <div class="send">
-      <V3Emoji
-          :recent="true"
-          @click-emoji="appendText"
-          :options-name="optionsName"
-          size="big"
-      />
+
       <textarea placeholder="聊点什么吧...."
                 v-model="stats.text"
                 @keyup.enter="send"
@@ -23,9 +18,9 @@
 import {nextTick, onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {showFailToast} from "vant";
-import {getCurrentUser} from "../services/user.ts";
-import myAxios from "../plugins/myAxios.ts";
 
+import {getCurrentUser} from "../services/user.ts";
+import myAxios, {URL} from "../plugins/myAxios.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -50,34 +45,20 @@ const stats = ref({
     // 大厅
     HALL_CHAT: 3
   },
+  chatType: null,
   team: {
     teamId: 0,
     teamName: ''
   },
-  chatType: null,
   text: "",
   messages: [],
   content: ''
 })
-const appendText = (val) => {
-  stats.value.text += val
-}
-const optionsName = {
-  'Smileys & Emotion': '笑脸&表情',
-  'Food & Drink': '食物&饮料',
-  'Animals & Nature': '动物&自然',
-  'Travel & Places': '旅行&地点',
-  'People & Body': '人物&身体',
-  Objects: '物品',
-  Symbols: '符号',
-  Flags: '旗帜',
-  Activities: '活动'
-};
 
 let socket = null;
-
 const heartbeatInterval = 30 * 1000; // 30秒
 let heartbeatTimer = null;
+
 const startHeartbeat = () => {
   heartbeatTimer = setInterval(() => {
     if (socket.readyState === WebSocket.OPEN) {
@@ -92,29 +73,24 @@ const stopHeartbeat = () => {
 }
 
 const chatRoom = ref(null)
+const DEFAULT_TITLE = "聊天"
+const title = ref(DEFAULT_TITLE)
 onMounted(async () => {
   let {id, username, userType, teamId, teamName, teamType} = route.query
-  stats.value.chatUser.id = Number.parseInt(id) //用户id
-  stats.value.team.teamId = Number.parseInt(teamId) //队伍id
-  stats.value.chatUser.username = username  //用户名称
-  stats.value.team.teamName = teamName //队伍名称
+  stats.value.chatUser.id = Number.parseInt(id)
+  stats.value.team.teamId = Number.parseInt(teamId)
+  stats.value.chatUser.username = username
+  stats.value.team.teamName = teamName
   if (userType && Number.parseInt(userType) === stats.value.chatEnum.PRIVATE_CHAT) {
     stats.value.chatType = stats.value.chatEnum.PRIVATE_CHAT
-  }
-  else if (teamType && Number.parseInt(teamType) === stats.value.chatEnum.TEAM_CHAT){
+    title.value = stats.value.chatUser.username
+  } else if (teamType && Number.parseInt(teamType) === stats.value.chatEnum.TEAM_CHAT) {
     stats.value.chatType = stats.value.chatEnum.TEAM_CHAT
-  }
-  else {
+    title.value = stats.value.team.teamName
+  } else {
     stats.value.chatType = stats.value.chatEnum.HALL_CHAT
+    title.value = "公共聊天室"
   }
-
-  //todo 这里设置res报错，搞了两天才发现bug，返回值是res，下面都是stats.value.user
-  //获取当前用户信息
-  // const res = await getCurrentUser()
-  // if(res.code === 0){
-  //   stats.value.user = res.data
-  // }
-
   stats.value.user = await getCurrentUser()
 
 
@@ -126,7 +102,7 @@ onMounted(async () => {
         })
 
     privateMessage.data.forEach(chat => {
-      if (chat.isMy === true) {
+      if (chat.isMy) {
         createContent(null, chat.formUser, chat.text)
       } else {
         createContent(chat.toUser, null, chat.text,null,chat.createTime)
@@ -161,6 +137,7 @@ onMounted(async () => {
   init()
   // 内容始终显示最下方
   await nextTick()
+
   const lastElement = chatRoom.value.lastElementChild
   lastElement.scrollIntoView()
 })
@@ -172,8 +149,7 @@ const init = () => {
     showFailToast("您的浏览器不支持WebSocket")
   } else {
     // todo 区分线上线下
-    let socketUrl = `ws://localhost:8999/api/websocket/${uid}/${stats.value.team.teamId}`
-    if (socket != null) {
+    let socketUrl = 'ws://' + URL + '/websocket/' + uid + '/' + stats.value.team.teamId;    if (socket != null) {
       console.log("socket关闭了")
       socket.close();
       socket = null;
@@ -227,23 +203,20 @@ const init = () => {
         })
         flag = null;
       }
-    }
-
+    };
     //关闭事件
     socket.onclose = function () {
-      console.log("websocket已关闭");
       stopHeartbeat();
       setTimeout(init, 5000); // 5秒后重连
     };
     //发生了错误事件
     socket.onerror = function () {
-      console.log("websocket发生了错误");
+      showFailToast("发生了错误")
     }
   }
 }
 
 const send = () => {
-
   if (stats.value.chatUser.id === 0) {
     return;
   }
@@ -257,7 +230,6 @@ const send = () => {
     if (typeof (WebSocket) == "undefined") {
       showFailToast("您的浏览器不支持WebSocket")
     } else {
-      console.log("您的浏览器支持WebSocket");
       let message = {
         fromId: stats.value.user.id,
         toId: stats.value.chatUser.id,
@@ -276,12 +248,12 @@ const send = () => {
     }
   }
 }
-// todo 查看用户详情
+
 const showUser = (id) => {
   router.push({
-    name: 'userShow',
-    params: {
-      userId: id
+    path: '/user/detail',
+    query: {
+      id: id
     }
   })
 }
@@ -289,14 +261,15 @@ const showUser = (id) => {
 /**
  * 这个方法是用来将 json的聊天消息数据转换成 html的。
  */
-const createContent = (remoteUser, nowUser, text, isAdmin,createTime) => {  // 这个方法是用来将 json的聊天消息数据转换成 html的。
+const createContent = (remoteUser, nowUser, text, isAdmin, createTime) => {
   // 当前用户消息
   let html;
-  if (nowUser) { // nowUser 表示是否显示当前用户发送的聊天消息，绿色气泡
+  if (nowUser) {
+    // nowUser 表示是否显示当前用户发送的聊天消息，绿色气泡
     html = `
     <div class="message self">
     <div class="myInfo info">
-      <img :alt=${nowUser.username} class="avatar" onclick="showUser(${nowUser.id})" src=${nowUser.avatarUrl ?? defaultImage}>
+      <img :alt=${nowUser.username} class="avatar" onclick="showUser(${nowUser.id})" src=${nowUser.avatarUrl}>
     </div>
       <p class="text">${text}</p>
     </div>
@@ -304,10 +277,10 @@ const createContent = (remoteUser, nowUser, text, isAdmin,createTime) => {  // �
   } else if (remoteUser) {
     // remoteUser表示远程用户聊天消息，灰色的气泡
     html = `
-         <div class="message other">
-      <img :alt=${remoteUser.username} class="avatar" onclick="showUser(${remoteUser.id})" src=${remoteUser.avatarUrl ?? defaultImage}>
+     <div class="message other">
+      <img :alt=${remoteUser.username} class="avatar" onclick="showUser(${remoteUser.id})" src=${remoteUser.avatarUrl}>
     <div class="info">
-      <span class="username">${remoteUser.username.length < 10 ? remoteUser.username : remoteUser.username.slice(0, 10)}&nbsp;&nbsp;&nbsp;${createTime}</span>
+      <span class="username">${remoteUser.username.length < 10 ? remoteUser.username : remoteUser.username}&nbsp;&nbsp;&nbsp;${createTime ? createTime : ""}</span>
       <p class="${isAdmin ? 'admin text' : 'text'}" >${text}</p>
     </div>
     </div>
@@ -315,49 +288,110 @@ const createContent = (remoteUser, nowUser, text, isAdmin,createTime) => {  // �
   }
   stats.value.content += html;
 }
-
-/**
- * 模板字符串事件
- * @param id
- */
-window.showUser = (id) => {
-  showUser(id)
-}
-
+window.showUser = showUser
 </script>
 <style>
-@import "../css/chat.css";
 
-
-.emoji-item {
-  width: 0;
-  height: 0;
-  margin-top: -45px;
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
 }
 
-.pollup {
-  width: 290px;
-  height: 280px;
-  position: absolute;
-  right: 0;
-  margin-left: 10px;
-  bottom: 50px;
-  z-index: 5;
-  transition: all ease .5s;
-  border-radius: 10px;
-  overflow: hidden;
+.message {
+  display: flex;
+  align-items: center;
+  margin: 10px;
 }
 
-.pollup .emoji-container-item {
-  padding: 1px;
+.content {
+  padding-top: 5px;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column
+}
+
+.heard {
+  height: 30px;
+  align-self: center;
+  font-size: 18px;
   text-align: center;
-  cursor: pointer;
+  line-height: 30px;
 }
 
-.emoji-container-open-btn {
-  font-size: 28px;
-  cursor: pointer;
-  margin-left: 5px;
+.other {
+  align-self: flex-start;
 }
 
+.self {
+  align-self: flex-end;
+}
+
+.avatar {
+  align-self: flex-start;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.text {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #eee;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.other .text {
+  order: 2;
+}
+
+.self .text {
+  background-color: #0084ff;
+  color: #fff;
+}
+
+.other .avatar {
+  margin-right: 10px;
+}
+
+.self .avatar {
+  order: 2;
+  margin-left: 10px;
+}
+
+.input-text {
+  width: 100%;
+  border: none;
+  padding: 7px 10px;
+  outline: none;
+  resize: none;
+  max-height: 130px;
+  overflow-y: auto;
+  font-size: 15px;
+
+}
+
+.input-send-button {
+  height: 51px;
+  background-color: #ffffff;
+  color: #0094fe;
+  width: 60px;
+  padding-right: 3px;
+}
+
+.send {
+  height: 60px;
+  width: 100%;
+  flex: 1;
+  position: fixed;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 20px;
+}
 </style>
