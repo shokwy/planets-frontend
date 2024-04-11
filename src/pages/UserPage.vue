@@ -1,7 +1,6 @@
 <template>
   <template v-if="user != null">
-    <van-cell title="头像" center is-link to='/user/edit'
-              @click="toEdit('avatarUrl','头像', user.avatarUrl)">
+    <van-cell title="头像" center is-link to='/user/edit/avatar'>
       <img style="height: 48px" :src="user.avatarUrl"/>
     </van-cell>
     <van-cell title="昵称" is-link to='/user/edit' :value="user.username"

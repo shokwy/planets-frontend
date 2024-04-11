@@ -19,6 +19,7 @@ import TeamMembersPage from "../pages/TeamMembersPage.vue";
 import FriendPage from "../pages/FriendPage.vue";
 import FriendRequesPaget from "../pages/FriendRequesPaget.vue";
 import ChatPage from "../pages/ChatPage.vue";
+import UserUpdateAvatar from "../pages/UserUpdateAvatar.vue";
 
 
 
@@ -39,6 +40,7 @@ const routes = [
     { path: '/user/detail', title:'详情', component: ShowUserDetail },
     { path: '/user/team/join', title:'我加入星球', component: UserTeamJoinPage },
     { path: '/user/team/create', title:'我创建的星球', component: UserTeamCreatePage },
+    { path: '/user/edit/avatar', title:'编辑头像', component: UserUpdateAvatar },
 
     { path: '/friend', title:'好友', component: FriendPage },
     { path: '/friend/request', title:'好友', component: FriendRequesPaget },
